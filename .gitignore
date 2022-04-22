@@ -1,3 +1,8 @@
+.idea/*
+cmake-build-debug/*
+E1-basico/.idea/*
+E1-basico/cmake-build-debug/*
+
 # Prerequisites
 *.d
 

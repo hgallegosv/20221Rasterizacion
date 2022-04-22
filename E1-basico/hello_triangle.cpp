@@ -102,7 +102,7 @@ int main()
     float vertices[] = {
         -0.5f, -0.5f, 0.0f, // left  
          0.5f, -0.5f, 0.0f, // right 
-         0.0f,  0.5f, -10.f,  // top
+         0.0f,  0.5f, -1.0f,  // top
          1,-1,0,
          1,1,0,
          0.5,1, 0
