@@ -2,6 +2,8 @@
 cmake-build-debug/*
 E1-basico/.idea/*
 E1-basico/cmake-build-debug/*
+Piramide1/.idea/*
+Piramide1/cmake-build-debug/*
 
 # Prerequisites
 *.d
