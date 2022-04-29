@@ -37,6 +37,32 @@ char* readShader(char *nameFile) {
     fclose(filePointer);
     return content;
 }
+static void LinkProgram(GLuint id){
+    GLint status;
+    glLinkProgram(id);
+    glGetProgramiv(id, GL_LINK_STATUS, &status);
+    if (!status) {
+        GLint len;
+        glGetProgramiv(id, GL_INFO_LOG_LENGTH, &len);
+        char* message = (char*) malloc(len*sizeof(char));
+        glGetProgramInfoLog(id, len, 0, message);
+        printf(message);
+        free(message);
+    }
+}
+static void CompileShader(GLuint id){
+    GLint status;
+    glCompileShader(id);
+    glGetShaderiv(id, GL_LINK_STATUS, &status);
+    if (!status) {
+        GLint len;
+        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &len);
+        char* message = (char*) malloc(len*sizeof(char));
+        glGetShaderInfoLog(id, len, 0, message);
+        printf(message);
+        free(message);
+    }
+}
 
 static void CreateShaderProgram (char* vertexShaderFile, char* fragmentShaderFile, GLuint &p_id) {
     char*	vertexShader   = readShader(vertexShaderFile);
@@ -48,8 +74,8 @@ static void CreateShaderProgram (char* vertexShaderFile, char* fragmentShaderFil
         cout << "Could not create vertex shader object";
 
     glShaderSource(v_id, 1, (const char**) &vertexShader, 0);
-    //CompileShader(v_id);
-    glCompileShader(v_id);
+    CompileShader(v_id);
+    //glCompileShader(v_id);
 
     /* fragment shader */
     GLuint f_id = glCreateShader(GL_FRAGMENT_SHADER);
@@ -57,8 +83,8 @@ static void CreateShaderProgram (char* vertexShaderFile, char* fragmentShaderFil
         cout << "Could not create fragment shader object";
 
     glShaderSource(f_id, 1, (const char**) &fragmentShader, 0);
-    //CompileShader(f_id);
-    glCompileShader(v_id);
+    CompileShader(f_id);
+    //glCompileShader(v_id);
 
     /* program */
     p_id = glCreateProgram();
@@ -66,8 +92,8 @@ static void CreateShaderProgram (char* vertexShaderFile, char* fragmentShaderFil
         cout << "Could not create program object";
     glAttachShader(p_id, v_id);
     glAttachShader(p_id, f_id);
-    //LinkProgram(p_id);
-    glLinkProgram(p_id);
+    LinkProgram(p_id);
+    //glLinkProgram(p_id);
 
 }
 
@@ -84,7 +110,7 @@ void Redisplay(void) {
 }
 
 void setup() {
-    CreateShaderProgram("vertexShader.vs", "fragmentShader.fs", p_id);
+    CreateShaderProgram("../vertexShader.vs", "../fragmentShader.fs", p_id);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnable(GL_DEPTH_TEST);
     glBindAttribLocation(p_id, vertex_id, "aPos");
