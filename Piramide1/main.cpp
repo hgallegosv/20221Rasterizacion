@@ -99,7 +99,7 @@ void Redisplay(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(p_id);
-    glVertexAttribPointer(vertex_id, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), vertices1);
+    glVertexAttribPointer(vertex_id, 3, GL_FLOAT, GL_FALSE, 0, vertices1);
     glEnableVertexAttribArray(vertex_id);
     glDrawArrays(GL_TRIANGLES, 0, 12);
 

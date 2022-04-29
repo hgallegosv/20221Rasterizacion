@@ -1,7 +1,7 @@
 #version 330 core
 
 //in vec4 normal;
-//in vec4 posicion;
+in vec4 posicion;
 //in vec3 colorFinal;
 
 out vec4 FragColor;
@@ -19,5 +19,6 @@ void main() {
    //FragColor = vec4(colorFinal, 1.0f);
    //FragColor = colorFinal;
 
-   FragColor = vec4(1, 0, 0, 1);
+   //FragColor = vec4(1, 0, 0, 1);
+   FragColor = posicion;
 }

@@ -5,12 +5,13 @@ layout (location = 0) in vec3 aPos;
 //uniform mat4 matrix_model;
 
 //out vec4 normal;
-//out vec4 posicion;
+out vec4 posicion;
 //out vec3 colorFinal;
 
 void main()
 {
     gl_Position = vec4(aPos, 1.0);
+    posicion = vec4(aPos, 1.0);
 
    //posicion = matrix_model * vec4(aPos, 1.0);
    //gl_Position = posicion;
