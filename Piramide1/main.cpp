@@ -1,6 +1,7 @@
 #include <iostream>
+#include <GL/glew.h>
 #include <GL/freeglut.h>
-
+using namespace std;
 
 float vertices1[] = {
         0, 0, 0,    0.25, 0, 0.5,   0.5, 0, 0,
@@ -22,6 +23,20 @@ int indices2[] = {
 };
 GLuint p_id;
 
+char* readShader(char *nameFile) {
+    FILE* filePointer = fopen(nameFile, "rb");
+    char* content = NULL;
+    long numVal = 0;
+    fseek(filePointer, 0L, SEEK_END);
+    numVal = ftell(filePointer);
+    fseek(filePointer, 0L, SEEK_SET);
+    content = (char*) malloc((numVal+1) * sizeof(char));
+    fread(content, 1, numVal, filePointer);
+    content[numVal] = '\0';
+    fclose(filePointer);
+    return content;
+}
+
 static void CreateShaderProgram (char* vertexShaderFile, char* fragmentShaderFile, GLuint &p_id) {
     char*	vertexShader   = readShader(vertexShaderFile);
     char*	fragmentShader = readShader(fragmentShaderFile);
@@ -29,26 +44,29 @@ static void CreateShaderProgram (char* vertexShaderFile, char* fragmentShaderFil
     /* vertex shader */
     GLuint v_id = glCreateShader(GL_VERTEX_SHADER);
     if (v_id == 0)
-        Error("Could not create vertex shader object");
+        cout << "Could not create vertex shader object";
 
     glShaderSource(v_id, 1, (const char**) &vertexShader, 0);
-    CompileShader(v_id);
+    //CompileShader(v_id);
+    glCompileShader(v_id);
 
     /* fragment shader */
     GLuint f_id = glCreateShader(GL_FRAGMENT_SHADER);
     if (f_id == 0)
-        Error("Could not create fragment shader object");
+        cout << "Could not create fragment shader object";
 
     glShaderSource(f_id, 1, (const char**) &fragmentShader, 0);
-    CompileShader(f_id);
+    //CompileShader(f_id);
+    glCompileShader(v_id);
 
     /* program */
     p_id = glCreateProgram();
     if (p_id == 0)
-        Error("Could not create program object");
+        cout << "Could not create program object";
     glAttachShader(p_id, v_id);
     glAttachShader(p_id, f_id);
-    LinkProgram(p_id);
+    //LinkProgram(p_id);
+    glLinkProgram(p_id);
 
 }
 
@@ -59,6 +77,12 @@ void Redisplay(void) {
     glutSwapBuffers();
 }
 
+void setup() {
+    CreateShaderProgram("vertexShader.vs", "fragmentShader.fs", p_id);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnable(GL_DEPTH_TEST);
+}
+
 
 int main(int argc, char* argv[]) {
     glutInit(&argc, _argv);
@@ -67,11 +91,10 @@ int main(int argc, char* argv[]) {
 
     int nWindow = glutCreateWindow("test");
 
-    CreateShaderProgram("vertexShader.vs", "fragmentShader.fs", p_id);
-
-
     //glutKeyboardFunc( SampleKeyboard );
     glutDisplayFunc( Redisplay );
+
+    setup();
     glutMainLoop();
     return 0;
 }
