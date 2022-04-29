@@ -75,7 +75,6 @@ static void CreateShaderProgram (char* vertexShaderFile, char* fragmentShaderFil
 
     glShaderSource(v_id, 1, (const char**) &vertexShader, 0);
     CompileShader(v_id);
-    //glCompileShader(v_id);
 
     /* fragment shader */
     GLuint f_id = glCreateShader(GL_FRAGMENT_SHADER);
@@ -84,7 +83,6 @@ static void CreateShaderProgram (char* vertexShaderFile, char* fragmentShaderFil
 
     glShaderSource(f_id, 1, (const char**) &fragmentShader, 0);
     CompileShader(f_id);
-    //glCompileShader(v_id);
 
     /* program */
     p_id = glCreateProgram();
@@ -93,17 +91,16 @@ static void CreateShaderProgram (char* vertexShaderFile, char* fragmentShaderFil
     glAttachShader(p_id, v_id);
     glAttachShader(p_id, f_id);
     LinkProgram(p_id);
-    //glLinkProgram(p_id);
 
 }
 
 
 void Redisplay(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glUseProgram(p_id);
     glVertexAttribPointer(vertex_id, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), vertices1);
     glEnableVertexAttribArray(vertex_id);
-
     glDrawArrays(GL_TRIANGLES, 0, 12);
 
     glutSwapBuffers();
@@ -119,13 +116,16 @@ void setup() {
 
 int main(int argc, char* argv[]) {
     glutInit(&argc, _argv);
-    glutInitDisplayMode(GLUT_RGB);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGB);
     glutInitWindowSize(400, 300);
 
     int nWindow = glutCreateWindow("test");
 
     //glutKeyboardFunc( SampleKeyboard );
     glutDisplayFunc( Redisplay );
+
+    //glewExperimental = GL_TRUE;
+    glewInit();
 
     setup();
     glutMainLoop();
