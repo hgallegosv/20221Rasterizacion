@@ -22,6 +22,7 @@ int indices2[] = {
         0, 1, 3
 };
 GLuint p_id;
+GLint vertex_id = 0;
 
 char* readShader(char *nameFile) {
     FILE* filePointer = fopen(nameFile, "rb");
@@ -72,7 +73,12 @@ static void CreateShaderProgram (char* vertexShaderFile, char* fragmentShaderFil
 
 
 void Redisplay(void) {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glUseProgram(p_id);
+    glVertexAttribPointer(vertex_id, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), vertices1);
+    glEnableVertexAttribArray(vertex_id);
+
+    glDrawArrays(GL_TRIANGLES, 0, 12);
 
     glutSwapBuffers();
 }
@@ -81,6 +87,7 @@ void setup() {
     CreateShaderProgram("vertexShader.vs", "fragmentShader.fs", p_id);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnable(GL_DEPTH_TEST);
+    glBindAttribLocation(p_id, vertex_id, "aPos");
 }
 
 
