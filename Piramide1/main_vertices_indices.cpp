@@ -1,7 +1,6 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include "mat4.h"
 using namespace std;
 
 float vertices1[] = {
@@ -22,10 +21,8 @@ unsigned int indices2[] = {
         0, 2, 3,
         0, 1, 3
 };
-float tx=0, ty=0;
 GLuint p_id;
 GLint vertex_id = 0;
-GLuint matrix_model_id;
 
 char* readShader(char *nameFile) {
     FILE* filePointer = fopen(nameFile, "rb");
@@ -102,21 +99,6 @@ void Redisplay(void) {
     glUseProgram(p_id);
     glVertexAttribPointer(vertex_id, 3, GL_FLOAT, GL_FALSE, 0, (const void *)vertices2);
     glEnableVertexAttribArray(vertex_id);
-
-    mat4 matrix_model;
-    matrix_model.traslacion(tx, ty, 0);
-    //matrix_model.traslacion(0.5, 0.3, 0.1);
-    GLboolean transpose = GL_TRUE;
-    glUniformMatrix4fv(matrix_model_id, 1, transpose, matrix_model.m);
-
-    //glDrawArrays(GL_TRIANGLES, 0, 12);
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (const void *) indices2);
-
-
-    matrix_model.traslacion(-0.5, 0.3, 0.1);
-    transpose = GL_TRUE;
-    glUniformMatrix4fv(matrix_model_id, 1, transpose, matrix_model.m);
-
     //glDrawArrays(GL_TRIANGLES, 0, 12);
     glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (const void *) indices2);
 
@@ -125,23 +107,12 @@ void Redisplay(void) {
 }
 
 void setup() {
-    CreateShaderProgram("../vertexShader_modelo.vs", "../fragmentShader.fs", p_id);
+    CreateShaderProgram("../vertexShader.vs", "../fragmentShader.fs", p_id);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnable(GL_DEPTH_TEST);
     glBindAttribLocation(p_id, vertex_id, "aPos");
-    matrix_model_id = glGetUniformLocation(p_id, "matrix_model");
 }
 
-void keyboard(unsigned char key, int x, int y) {
-    switch (key) {
-        case 27: exit(0);
-        case 'a': tx -= 0.1; break;
-        case 'd': tx += 0.1; break;
-        case 'w': ty += 0.1; break;
-        case 's': ty -= 0.1; break;
-    }
-    glutPostRedisplay();
-}
 
 int main(int argc, char* argv[]) {
     glutInit(&argc, argv);
@@ -150,7 +121,7 @@ int main(int argc, char* argv[]) {
 
     int nWindow = glutCreateWindow("test");
 
-    glutKeyboardFunc( keyboard );
+    //glutKeyboardFunc( SampleKeyboard );
     glutDisplayFunc( Redisplay );
 
     //glewExperimental = GL_TRUE;
