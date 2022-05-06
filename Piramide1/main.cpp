@@ -23,6 +23,7 @@ unsigned int indices2[] = {
         0, 1, 3
 };
 float tx=0, ty=0;
+float gx=0;
 GLuint p_id;
 GLint vertex_id = 0;
 GLuint matrix_model_id;
@@ -104,8 +105,9 @@ void Redisplay(void) {
     glEnableVertexAttribArray(vertex_id);
 
     mat4 matrix_model;
-    matrix_model.traslacion(tx, ty, 0);
+    //matrix_model.traslacion(tx, ty, 0);
     //matrix_model.traslacion(0.5, 0.3, 0.1);
+    matrix_model.rotacion(gx, 0, 0);
     GLboolean transpose = GL_TRUE;
     glUniformMatrix4fv(matrix_model_id, 1, transpose, matrix_model.m);
 
@@ -139,6 +141,7 @@ void keyboard(unsigned char key, int x, int y) {
         case 'd': tx += 0.1; break;
         case 'w': ty += 0.1; break;
         case 's': ty -= 0.1; break;
+        case 'x': gx += 0.1; break;
     }
     glutPostRedisplay();
 }

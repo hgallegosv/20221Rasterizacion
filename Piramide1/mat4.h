@@ -6,6 +6,8 @@
 #define PIRAMIDE1_MAT4_H
 
 
+#include <cmath>
+
 class mat4 {
 public:
     float m[16];
@@ -15,8 +17,10 @@ public:
     void identidad();
     void escala(float sx, float sy, float sz);
     void traslacion(float tx, float ty, float tz);
+    void rotacion(float gx, float gy, float gz);
 
     mat4 multiplicar(mat4 matriz);
+
 };
 mat4::mat4() {
     identidad();
@@ -45,6 +49,12 @@ mat4 mat4::multiplicar(mat4 matriz) {
 
 }
 
-
+void mat4::rotacion(float gx, float gy, float gz) {
+    identidad();
+    m[5] = cos(gx);
+    m[6] = -sin(gx);
+    m[9] = sin(gx);
+    m[10] = cos(gx);
+}
 
 #endif //PIRAMIDE1_MAT4_H
