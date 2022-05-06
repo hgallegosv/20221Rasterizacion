@@ -127,6 +127,7 @@ void Redisplay(void) {
 }
 
 void setup() {
+    glClearColor(1.0, 1.0, 1.0, 0.0);
     CreateShaderProgram("../vertexShader_modelo.vs", "../fragmentShader.fs", p_id);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnable(GL_DEPTH_TEST);
