@@ -15,7 +15,7 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 float gx=0;
-GLuint matrix_model_id;
+GLuint matrix_model_id, matrix_view_id, matrix_projection_id;
 
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
@@ -69,6 +69,8 @@ int main() {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+    // configure global opengl state
+    glEnable(GL_DEPTH_TEST);
 
     // build and compile our shader program
     // vertex shader
@@ -110,6 +112,8 @@ int main() {
     glDeleteShader(fragmentShader);
 
     matrix_model_id = glGetUniformLocation(shaderProgram, "matrix_model");
+    matrix_view_id = glGetUniformLocation(shaderProgram, "matrix_view");
+    matrix_projection_id = glGetUniformLocation(shaderProgram, "matrix_projection");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     float vertices[] = {
@@ -165,6 +169,11 @@ int main() {
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+    // pass projection matrix to shader (as projection matrix rarely changes there's no need to do this per frame)
+    // -----------------------------------------------------------------------------------------------------------
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    //ourShader.setMat4("projection", projection);
+    glUniformMatrix4fv(matrix_projection_id, 1, GL_FALSE, glm::value_ptr(projection));
 
 
     // render loop
@@ -174,16 +183,21 @@ int main() {
 
         // render
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // draw our first triangle
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
 
-        glm::mat4 matrix_model = glm::rotate(glm::mat4(1.0f), gx, glm::vec3(1.f, 0, 0));
+        glm::mat4 matrix_model = glm::rotate(glm::mat4(1.0f), glm::radians(gx), glm::vec3(1.f, 0, 0));
         GLboolean transpose = GL_FALSE;
         glUniformMatrix4fv(matrix_model_id, 1, transpose, glm::value_ptr(matrix_model));
 
+        //glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        glm::mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0,0,0), glm::vec3(0,1,0));
+        view = glm::translate(glm::mat4(1.0f), glm::vec3(0.4, 0.3,0.1));
+        //ourShader.setMat4("view", view);
+        glUniformMatrix4fv(matrix_view_id, 1, transpose, glm::value_ptr(view));
 
         //glDrawArrays(GL_TRIANGLES, 0, 6);
         glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
@@ -211,7 +225,7 @@ void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-        gx += 0.1;
+        gx += 1;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
