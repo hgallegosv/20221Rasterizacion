@@ -1,12 +1,7 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include <glm/vec3.hpp> // glm::vec3
-#include <glm/vec4.hpp> // glm::vec4
-#include <glm/mat4x4.hpp> // glm::mat4
-#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
-#include <glm/gtc/type_ptr.hpp>
-
+#include "mat4.h"
 using namespace std;
 
 float vertices1[] = {
@@ -109,22 +104,20 @@ void Redisplay(void) {
     glVertexAttribPointer(vertex_id, 3, GL_FLOAT, GL_FALSE, 0, (const void *)vertices2);
     glEnableVertexAttribArray(vertex_id);
 
-    //mat4 matrix_model;
+    mat4 matrix_model;
     //matrix_model.traslacion(tx, ty, 0);
     //matrix_model.traslacion(0.5, 0.3, 0.1);
-    //matrix_model.rotacion(gx, 0, 0);
-    glm::mat4 matrix_model = glm::rotate(glm::mat4(1.0f), gx, glm::vec3(1.f, 0, 0));
-    GLboolean transpose = GL_FALSE;
-    glUniformMatrix4fv(matrix_model_id, 1, transpose, glm::value_ptr(matrix_model));
+    matrix_model.rotacion(gx, 0, 0);
+    GLboolean transpose = GL_TRUE;
+    glUniformMatrix4fv(matrix_model_id, 1, transpose, matrix_model.m);
 
     //glDrawArrays(GL_TRIANGLES, 0, 12);
     glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (const void *) indices2);
 
 
-    //matrix_model.traslacion(-0.5, 0.3, 0.1);
-    matrix_model = glm::translate(glm::mat4(1.0f),  glm::vec3(-0.5, 0.3, 0.1));
-    transpose = GL_FALSE;
-    glUniformMatrix4fv(matrix_model_id, 1, transpose, glm::value_ptr(matrix_model));
+    matrix_model.traslacion(-0.5, 0.3, 0.1);
+    transpose = GL_TRUE;
+    glUniformMatrix4fv(matrix_model_id, 1, transpose, matrix_model.m);
 
     //glDrawArrays(GL_TRIANGLES, 0, 12);
     glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (const void *) indices2);
