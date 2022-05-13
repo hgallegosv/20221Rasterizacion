@@ -8,6 +8,9 @@ Piramide2/.idea/*
 Piramide2/cmake-build-debug/*
 ModeloPLY/.idea/*
 ModeloPLY/cmake-build-debug/*
+LearnOpenGL/.idea/*
+LearnOpenGL/cmake-build-debug/*
+
 
 # Prerequisites
 *.d
