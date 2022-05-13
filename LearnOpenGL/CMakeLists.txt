@@ -3,6 +3,6 @@ project(LearnOpenGL)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(LearnOpenGL basic_lighting_specular.cpp camera.h shader_m.h glad.c)
+add_executable(LearnOpenGL multiple_lights.cpp camera.h shader_m.h glad.c stb_image.h stb_image.cpp)
 
 target_link_libraries(LearnOpenGL -lOpenGL32 -lGLU32 -lglfw3 -lGLEW32)
