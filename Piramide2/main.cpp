@@ -7,6 +7,7 @@
 #include <glm/mat4x4.hpp> // glm::mat4
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -75,7 +76,7 @@ int main() {
     // build and compile our shader program
     // vertex shader
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    char *vertexShaderSource = readShader("../basico1.vs");
+    char *vertexShaderSource = readShader("../basico2.vs");
     char *fragmentShaderSource = readShader("../basico0.fs");
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
@@ -174,7 +175,12 @@ int main() {
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     //ourShader.setMat4("projection", projection);
     glUniformMatrix4fv(matrix_projection_id, 1, GL_FALSE, glm::value_ptr(projection));
-
+    std::cout << glm::to_string(projection) << std::endl;
+    glm::mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0,0,0), glm::vec3(0,1,0));
+    glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(gx), glm::vec3(1.f, 0, 0));
+    glm::vec4 punto = projection * view * model * glm::vec4(0,0,0,1);
+    punto = punto / punto.w;
+    std::cout << glm::to_string(punto) << std::endl;
 
     // render loop
     while (!glfwWindowShouldClose(window)) {
@@ -189,15 +195,15 @@ int main() {
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
 
-        glm::mat4 matrix_model = glm::rotate(glm::mat4(1.0f), glm::radians(gx), glm::vec3(1.f, 0, 0));
+        glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(gx), glm::vec3(1.f, 0, 0));
         GLboolean transpose = GL_FALSE;
-        glUniformMatrix4fv(matrix_model_id, 1, transpose, glm::value_ptr(matrix_model));
+        glUniformMatrix4fv(matrix_model_id, 1, transpose, glm::value_ptr(model));
 
         //glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         glm::mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0,0,0), glm::vec3(0,1,0));
-        view = glm::translate(glm::mat4(1.0f), glm::vec3(0.4, 0.3,0.1));
-        //ourShader.setMat4("view", view);
+        //view = glm::translate(glm::mat4(1.0f), glm::vec3(0.4, 0.3,0.1));
         glUniformMatrix4fv(matrix_view_id, 1, transpose, glm::value_ptr(view));
+
 
         //glDrawArrays(GL_TRIANGLES, 0, 6);
         glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
