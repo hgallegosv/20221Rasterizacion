@@ -10,7 +10,10 @@ ModeloPLY/.idea/*
 ModeloPLY/cmake-build-debug/*
 LearnOpenGL/.idea/*
 LearnOpenGL/cmake-build-debug/*
-
+Proyecto2/.idea/*
+Proyecto2/cmake-build-debug/*
+MatricesGLM/.idea/*
+MatricesGLM/cmake-build-debug/*
 
 # Prerequisites
 *.d
