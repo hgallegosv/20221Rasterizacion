@@ -39,6 +39,7 @@ GLint POSITION_ATTRIBUTE=0, NORMAL_ATTRIBUTE=1, TEXCOORD0_ATTRIBUTE=8;
 
 vector<Objeto*> pObjetos;
 Esfera esfera(vec3(0),2., 100, 100);
+bool proyectil_listo = false;
 
 int main() {
     // glfw: initialize and configure
@@ -163,14 +164,20 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS){
-        float x = rand()%10;
-        float y = rand()%10;
-        float z = rand()%10;
-        Esfera *esfera1 = new Esfera(vec3(x,y,z));
-        esfera1->vao = esfera.vao;
-        esfera1->indices_size = esfera.indices_size;
-        esfera1->bv = new BoundingBox();
-        pObjetos.emplace_back(esfera1);
+        if (!proyectil_listo){
+            float x = rand()%10;
+            float y = rand()%10;
+            float z = rand()%10;
+            Esfera *esfera1 = new Esfera(vec3(x,y,z));
+            esfera1->vao = esfera.vao;
+            esfera1->indices_size = esfera.indices_size;
+            esfera1->bv = new BoundingBox();
+            pObjetos.emplace_back(esfera1);
+            proyectil_listo = true;
+        }
+    }
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE){
+        proyectil_listo = false;
     }
 }
 

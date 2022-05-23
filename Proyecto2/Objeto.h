@@ -55,5 +55,9 @@ public:
     void display(Shader &sh);
 };
 
+class Caja : public Objeto {
+public:
+
+};
 
 #endif //LEARNOPENGL_OBJETO_H
