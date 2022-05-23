@@ -7,6 +7,8 @@
 
 #include "shader_m.h"
 #include "camera.h"
+#include "Objeto.h"
+#include "BoundingVolume.h"
 
 #include <iostream>
 
@@ -20,7 +22,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 20.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -34,77 +36,11 @@ glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 GLuint luna_vao;
 int luna_numIndices;
 GLint POSITION_ATTRIBUTE=0, NORMAL_ATTRIBUTE=1, TEXCOORD0_ATTRIBUTE=8;
-GLuint SolidSphere( float radius, int slices, int stacks ) {
-    using namespace glm;
-    using namespace std;
-    const float pi = 3.1415926535897932384626433832795f;
-    const float _2pi = 2.0f * pi;
-    vector<vec3> positions;
-    vector<vec3> normals;
-    vector<vec2> textureCoords;
-    for( int i = 0; i <= stacks; ++i )
-    {
-        // V texture coordinate.
-        float V = i / (float)stacks;
-        float phi = V * pi;
-        for ( int j = 0; j <= slices; ++j )
-        {
-            // U texture coordinate.
-            float U = j / (float)slices;
-            float theta = U * _2pi;
-            float X = cos(theta) * sin(phi);
-            float Y = cos(phi);
-            float Z = sin(theta) * sin(phi);
-            positions.push_back( vec3( X, Y, Z) * radius );
-            normals.push_back( vec3(X, Y, Z) );
-            textureCoords.push_back( vec2(U, V) );
-        }
-    }
-    // Now generate the index buffer
-    vector<GLuint> indicies;
-    for( int i = 0; i < slices * stacks + slices; ++i ) {
-        indicies.push_back( i );
-        indicies.push_back( i + slices + 1  );
-        indicies.push_back( i + slices );
-        indicies.push_back( i + slices + 1  );
-        indicies.push_back( i );
-        indicies.push_back( i + 1 );
-    }
 
-    GLuint vao;
-    glGenVertexArrays( 1, &vao );
-    glBindVertexArray( vao );
+vector<Objeto*> pObjetos;
+Esfera esfera(vec3(0),2., 100, 100);
 
-    GLuint vbos[4];
-    glGenBuffers( 4, vbos );
-
-    glBindBuffer( GL_ARRAY_BUFFER, vbos[0] );
-    glBufferData( GL_ARRAY_BUFFER, positions.size() * sizeof(vec3), positions.data(), GL_STATIC_DRAW );
-    glVertexAttribPointer( POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-    glEnableVertexAttribArray( POSITION_ATTRIBUTE );
-
-    glBindBuffer( GL_ARRAY_BUFFER, vbos[1] );
-    glBufferData( GL_ARRAY_BUFFER, normals.size() * sizeof(vec3), normals.data(), GL_STATIC_DRAW );
-    glVertexAttribPointer( NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_TRUE, 0, (void*)0 );
-    glEnableVertexAttribArray( NORMAL_ATTRIBUTE );
-
-    glBindBuffer( GL_ARRAY_BUFFER, vbos[2] );
-    glBufferData( GL_ARRAY_BUFFER, textureCoords.size() * sizeof(vec2), textureCoords.data(), GL_STATIC_DRAW );
-    glVertexAttribPointer( TEXCOORD0_ATTRIBUTE, 2, GL_FLOAT, GL_FALSE, 0, (void*)0 );
-    glEnableVertexAttribArray( TEXCOORD0_ATTRIBUTE );
-
-    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vbos[3] );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, indicies.size() * sizeof(GLuint), indicies.data(), GL_STATIC_DRAW );
-    glBindVertexArray( 0 );
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
-    return vao;
-}
-
-bool aparece = false;
-
-int main()
-{
+int main() {
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -119,8 +55,7 @@ int main()
     // glfw window creation
     // --------------------
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
-    {
+    if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
@@ -135,8 +70,7 @@ int main()
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
@@ -150,28 +84,22 @@ int main()
     Shader lightingShader("../2.2.basic_lighting.vs", "../2.2.basic_lighting.fs");
     //Shader lightCubeShader("../2.2.light_cube.vs", "../2.2.light_cube.fs");
 
-
-    int slices = 100;
-    int stacks = 100;
-    luna_numIndices = ( slices * stacks + slices ) * 6;
-    luna_vao = SolidSphere( 2., slices, stacks);
+    esfera.vao = esfera.setup();
+    Esfera esfera1(vec3(0));
+    esfera1.vao = esfera.vao;
+    esfera1.indices_size = esfera.indices_size;
+    esfera1.bv = new BoundingBox();
+    pObjetos.emplace_back(&esfera1);
 
     // render loop
-    // -----------
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         // per-frame time logic
-        // --------------------
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        // input
-        // -----
         processInput(window);
-
         // render
-        // ------
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -189,14 +117,18 @@ int main()
         lightingShader.setMat4("view", view);
 
         // world transformation
-        glm::mat4 model = glm::mat4(1.0f);
+        /*glm::mat4 model = glm::mat4(1.0f);
         model = glm::scale(model, glm::vec3(0.5));
         lightingShader.setMat4("model", model);
         if (aparece) {
             glBindVertexArray(luna_vao);
             glDrawElements(GL_TRIANGLES, luna_numIndices, GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
+        }*/
+        for (auto &esf : pObjetos ) {
+            esf->display(lightingShader);
         }
+
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -230,8 +162,16 @@ void processInput(GLFWwindow *window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-        aparece = !aparece;
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS){
+        float x = rand()%10;
+        float y = rand()%10;
+        float z = rand()%10;
+        Esfera *esfera1 = new Esfera(vec3(x,y,z));
+        esfera1->vao = esfera.vao;
+        esfera1->indices_size = esfera.indices_size;
+        esfera1->bv = new BoundingBox();
+        pObjetos.emplace_back(esfera1);
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
