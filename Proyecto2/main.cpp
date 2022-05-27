@@ -42,6 +42,22 @@ vector<Objeto*> pObjetos;
 Esfera esfera(vec3(0),2., 100, 100);
 bool proyectil_listo = false;
 
+void Escena1(){
+    Esfera *esfera1 = new Esfera(vec3(10, 0,0));
+    esfera1->vao = esfera.vao;
+    esfera1->indices_size = esfera.indices_size;
+    esfera1->radius = esfera.radius;
+    esfera1->bv = new BoundingBox();
+    pObjetos.emplace_back(esfera1);
+
+    Esfera *esfera2 = new Esfera(vec3(14, 0,0));
+    esfera2->vao = esfera.vao;
+    esfera2->indices_size = esfera.indices_size;
+    esfera2->radius = esfera.radius;
+    esfera2->bv = new BoundingBox();
+    pObjetos.emplace_back(esfera2);
+}
+
 int main() {
     // glfw: initialize and configure
     // ------------------------------
@@ -87,11 +103,8 @@ int main() {
     //Shader lightCubeShader("../2.2.light_cube.vs", "../2.2.light_cube.fs");
 
     esfera.vao = esfera.setup();
-    Esfera esfera1(vec3(0));
-    esfera1.vao = esfera.vao;
-    esfera1.indices_size = esfera.indices_size;
-    esfera1.bv = new BoundingBox();
-    //pObjetos.emplace_back(&esfera1);
+    Escena1();
+
 
     // render loop
     while (!glfwWindowShouldClose(window)) {
@@ -130,6 +143,8 @@ int main() {
         }*/
         for (auto &esf : pObjetos ) {
             esf->actualizarDatos(tiempoTranscurrido);
+            // calcular si hay colision
+            esf->calcularColision(pObjetos);
             esf->display(lightingShader);
         }
 

@@ -37,6 +37,7 @@ public:
     virtual GLuint setup()=0;
     virtual void display(Shader &sh)=0;
     virtual void actualizarDatos(float t)=0;
+    virtual void calcularColision(vector<Objeto*> pObjetos)=0;
 };
 
 class Esfera:public Objeto{
@@ -59,11 +60,19 @@ public:
     GLuint setup();
     void display(Shader &sh);
     void actualizarDatos(float t);
+    void calcularColision(vector<Objeto*> pObjetos);
 };
 
 class Caja : public Objeto {
 public:
-
+    vec3 posmin, posmax;
+    Caja() {
+        posmin = vec3(0.0);
+        posmax = vec3(1.0);
+    }
+    GLuint setup();
+    void display(Shader &sh);
+    void actualizarDatos(float t);
 };
 
 #endif //LEARNOPENGL_OBJETO_H

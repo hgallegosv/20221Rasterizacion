@@ -3,6 +3,7 @@
 //
 
 #include "Objeto.h"
+#include "BoundingVolume.h"
 
 GLuint Esfera::setup() {
     using namespace glm;
@@ -89,4 +90,12 @@ void Esfera::actualizarDatos(float t){
     centro.x = pos_ini.x + vel_ini.x * cos(radians(ang_ini)) * t;
     centro.y = pos_ini.y + vel_ini.y * sin(radians(ang_ini)) * t - 0.5 * g * t * t;
     cout<< t << "\t" << to_string(pos_ini) << "\t" << to_string(centro) << endl;
+}
+
+void Esfera::calcularColision(vector<Objeto*> pObjetos) {
+    for (auto &obj : pObjetos) {
+        if (bv->Colision( *obj->bv) ) {
+            // reacciónar a la colision
+        }
+    }
 }
