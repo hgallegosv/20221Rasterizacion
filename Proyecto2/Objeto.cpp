@@ -83,3 +83,10 @@ void Esfera::display(Shader &sh){
         glBindVertexArray(0);
     }
 }
+
+void Esfera::actualizarDatos(float t){
+    float g = 9.8;
+    centro.x = pos_ini.x + vel_ini.x * cos(radians(ang_ini)) * t;
+    centro.y = pos_ini.y + vel_ini.y * sin(radians(ang_ini)) * t - 0.5 * g * t * t;
+    cout<< t << "\t" << to_string(pos_ini) << "\t" << to_string(centro) << endl;
+}

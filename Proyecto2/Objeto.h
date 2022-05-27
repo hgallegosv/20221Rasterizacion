@@ -7,6 +7,7 @@
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -30,8 +31,12 @@ public:
     BoundingVolume *bv;
     GLint POSITION_ATTRIBUTE=0, NORMAL_ATTRIBUTE=1, TEXCOORD0_ATTRIBUTE=8;
 
+    vec3 vel_ini, pos_ini;
+    float ang_ini;
+
     virtual GLuint setup()=0;
     virtual void display(Shader &sh)=0;
+    virtual void actualizarDatos(float t)=0;
 };
 
 class Esfera:public Objeto{
@@ -53,6 +58,7 @@ public:
     }
     GLuint setup();
     void display(Shader &sh);
+    void actualizarDatos(float t);
 };
 
 class Caja : public Objeto {

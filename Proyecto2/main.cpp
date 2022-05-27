@@ -22,7 +22,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 20.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 50.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -30,6 +30,7 @@ bool firstMouse = true;
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+float tiempoInicial = 0.0f, tiempoTranscurrido= 0.0f;
 
 // lighting
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
@@ -90,7 +91,7 @@ int main() {
     esfera1.vao = esfera.vao;
     esfera1.indices_size = esfera.indices_size;
     esfera1.bv = new BoundingBox();
-    pObjetos.emplace_back(&esfera1);
+    //pObjetos.emplace_back(&esfera1);
 
     // render loop
     while (!glfwWindowShouldClose(window)) {
@@ -98,7 +99,8 @@ int main() {
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
+        tiempoTranscurrido = currentFrame - tiempoInicial; //static_cast<float>(glfwGetTime());
+        cout << tiempoInicial << "\t";
         processInput(window);
         // render
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -127,6 +129,7 @@ int main() {
             glBindVertexArray(0);
         }*/
         for (auto &esf : pObjetos ) {
+            esf->actualizarDatos(tiempoTranscurrido);
             esf->display(lightingShader);
         }
 
@@ -171,13 +174,20 @@ void processInput(GLFWwindow *window)
             Esfera *esfera1 = new Esfera(vec3(x,y,z));
             esfera1->vao = esfera.vao;
             esfera1->indices_size = esfera.indices_size;
+            esfera1->radius = esfera.radius;
             esfera1->bv = new BoundingBox();
             pObjetos.emplace_back(esfera1);
             proyectil_listo = true;
+            esfera1->vel_ini = vec3(10,10,0);
+            esfera1->pos_ini = vec3(x,y,z);
+            esfera1->ang_ini = 45;
+            tiempoInicial = static_cast<float>(glfwGetTime());
         }
     }
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE){
         proyectil_listo = false;
+
+
     }
 }
 
