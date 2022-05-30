@@ -41,20 +41,26 @@ GLint POSITION_ATTRIBUTE=0, NORMAL_ATTRIBUTE=1, TEXCOORD0_ATTRIBUTE=8;
 vector<Objeto*> pObjetos;
 Esfera esfera(vec3(0),2., 100, 100);
 bool proyectil_listo = false;
+Esfera *proyectil = new Esfera();
+
 
 void Escena1(){
-    Esfera *esfera1 = new Esfera(vec3(10, 0,0));
+    Esfera *esfera1 = new Esfera(vec3(30, 0,0));
     esfera1->vao = esfera.vao;
     esfera1->indices_size = esfera.indices_size;
     esfera1->radius = esfera.radius;
+    esfera1->fijo = true;
     esfera1->bv = new BoundingBox();
+    esfera1->bv->calcular( *esfera1 );
     pObjetos.emplace_back(esfera1);
 
-    Esfera *esfera2 = new Esfera(vec3(14, 0,0));
+    Esfera *esfera2 = new Esfera(vec3(40, 0,0));
     esfera2->vao = esfera.vao;
     esfera2->indices_size = esfera.indices_size;
     esfera2->radius = esfera.radius;
+    esfera2->fijo = true;
     esfera2->bv = new BoundingBox();
+    esfera2->bv->calcular( *esfera2 );
     pObjetos.emplace_back(esfera2);
 }
 
@@ -142,7 +148,9 @@ int main() {
             glBindVertexArray(0);
         }*/
         for (auto &esf : pObjetos ) {
-            esf->actualizarDatos(tiempoTranscurrido);
+            if ( !esf->fijo ){
+                esf->actualizarDatos(tiempoTranscurrido);
+            }
             // calcular si hay colision
             esf->calcularColision(pObjetos);
             esf->display(lightingShader);
@@ -186,16 +194,16 @@ void processInput(GLFWwindow *window)
             float x = rand()%10;
             float y = rand()%10;
             float z = rand()%10;
-            Esfera *esfera1 = new Esfera(vec3(x,y,z));
-            esfera1->vao = esfera.vao;
-            esfera1->indices_size = esfera.indices_size;
-            esfera1->radius = esfera.radius;
-            esfera1->bv = new BoundingBox();
-            pObjetos.emplace_back(esfera1);
+            proyectil->vao = esfera.vao;
+            proyectil->indices_size = esfera.indices_size;
+            proyectil->radius = esfera.radius;
+            proyectil->bv = new BoundingBox();
+            proyectil->bv->calcular( *proyectil );
+            pObjetos.emplace_back(proyectil);
             proyectil_listo = true;
-            esfera1->vel_ini = vec3(10,10,0);
-            esfera1->pos_ini = vec3(x,y,z);
-            esfera1->ang_ini = 45;
+            proyectil->vel_ini = vec3(20,10,0);
+            proyectil->pos_ini = vec3(x,y,z);
+            proyectil->ang_ini = 45;
             tiempoInicial = static_cast<float>(glfwGetTime());
         }
     }

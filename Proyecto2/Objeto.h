@@ -33,6 +33,7 @@ public:
 
     vec3 vel_ini, pos_ini;
     float ang_ini;
+    bool fijo=false;
 
     virtual GLuint setup()=0;
     virtual void display(Shader &sh)=0;
@@ -47,12 +48,18 @@ public:
     int slices, stacks;
     Esfera() {
         centro = vec3(0.0);
+        pos_ini = centro;
+        vel_ini = vec3(0);
     }
     Esfera(vec3 _centro) {
         centro = _centro;
+        pos_ini = centro;
+        vel_ini = vec3(0);
     }
     Esfera(vec3 _centro, float _radius, int _slices, int _stacks) {
         centro = _centro;
+        pos_ini = centro;
+        vel_ini = vec3(0);
         radius = _radius;
         slices = _slices;
         stacks = _stacks;

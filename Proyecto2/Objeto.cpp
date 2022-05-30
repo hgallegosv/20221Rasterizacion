@@ -89,13 +89,16 @@ void Esfera::actualizarDatos(float t){
     float g = 9.8;
     centro.x = pos_ini.x + vel_ini.x * cos(radians(ang_ini)) * t;
     centro.y = pos_ini.y + vel_ini.y * sin(radians(ang_ini)) * t - 0.5 * g * t * t;
+    bv->calcular( *this );
     cout<< t << "\t" << to_string(pos_ini) << "\t" << to_string(centro) << endl;
 }
 
 void Esfera::calcularColision(vector<Objeto*> pObjetos) {
     for (auto &obj : pObjetos) {
-        if (bv->Colision( *obj->bv) ) {
+        if (this != obj and bv->ColisionBox( static_cast<BoundingBox*>(obj->bv)) ) {
             // reacciónar a la colision
+            cout << "Hay colision ";
+
         }
     }
 }
