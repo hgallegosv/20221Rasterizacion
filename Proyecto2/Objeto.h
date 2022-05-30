@@ -34,11 +34,13 @@ public:
     vec3 vel_ini, pos_ini;
     float ang_ini;
     bool fijo=false;
+    vec3 dir;
 
     virtual GLuint setup()=0;
     virtual void display(Shader &sh)=0;
     virtual void actualizarDatos(float t)=0;
     virtual void calcularColision(vector<Objeto*> pObjetos)=0;
+    virtual void moverse(vec3 dir)=0;
 };
 
 class Esfera:public Objeto{
@@ -65,9 +67,11 @@ public:
         stacks = _stacks;
     }
     GLuint setup();
+
     void display(Shader &sh);
     void actualizarDatos(float t);
     void calcularColision(vector<Objeto*> pObjetos);
+    void moverse(vec3 dir);
 };
 
 class Caja : public Objeto {
