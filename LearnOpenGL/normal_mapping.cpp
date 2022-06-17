@@ -82,8 +82,8 @@ int main()
 
     // load textures
     // -------------
-    unsigned int diffuseMap = loadTexture("../resources/textures/brickwall.jpg");
-    unsigned int normalMap  = loadTexture("../resources/textures/brickwall_normal.jpg");
+    unsigned int diffuseMap = loadTexture("../resources/textures/bricks2.jpg");
+    unsigned int normalMap  = loadTexture("../resources/textures/bricks2_normal.jpg");
 
     // shader configuration
     // --------------------
