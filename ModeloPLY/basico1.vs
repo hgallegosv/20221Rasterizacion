@@ -6,11 +6,16 @@ out vec3 normal;
 out vec3 posicion;
 //out vec3 colorFinal;
 
+out VS_OUT {
+    vec3 normal;
+} vs_out;
+
 void main()
 {
    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
    posicion = aPos;
    normal = aNormal;
+   vs_out.normal = normal;
 
    // iluminacion difusa en vertex shader
    //vec3 posicionLuz = vec3(1., 1., -10.);
